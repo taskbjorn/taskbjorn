@@ -1,0 +1,189 @@
+---
+name: Update GitHub profile badges
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+env:
+  # -------------------------------------------------------------------------- #
+  # > General settings                                                         #
+  # -------------------------------------------------------------------------- #
+  USERNAME: taskbjorn
+  THEME: tokyonight
+
+  # -------------------------------------------------------------------------- #
+  # > GitHub profile contributions snake settings                              #
+  # -------------------------------------------------------------------------- #
+  SNAKE_COLOR: "4d3f65"
+  SNAKE_DOT_COLORS: "#161b22,#0e4429,#006d32,#26a641,#39d353"
+
+  # -------------------------------------------------------------------------- #
+  # > GitHub repository statistics card settings                               #
+  # -------------------------------------------------------------------------- #
+  STATS_TITLE: taskbjorn
+  STATS_WIDTH: 350
+  STATS_SHOW_ICONS: "true"
+  STATS_INCLUDE_ALL_COMMITS: "true"
+  STATS_HIDE_RANK: "false"
+  STATS_RANK_ICON: github
+  STATS_TEXT_BOLD: "false"
+  STATS_ANIMATIONS: "false"
+  STATS_RING_COLOR: 2f80ed
+  STATS_NUMBER_FORMAT: long
+  STATS_LINE_HEIGHT: 28
+
+  # -------------------------------------------------------------------------- #
+  # > GitHub top languages card settings                                       #
+  # -------------------------------------------------------------------------- #
+  LANGS_COUNT: 5
+  LANGS_LAYOUT: donut
+  LANGS_SIZE_WEIGHT: 0.5
+  LANGS_COUNT_WEIGHT: 0.5
+  LANGS_HIDE: css,ejs,html,javascript,lua
+  LANGS_HIDE_PROGRESS: "false"
+
+  # -------------------------------------------------------------------------- #
+  # > GitHub trophies card settings                                            #
+  # -------------------------------------------------------------------------- #
+  TROPHY_COLUMNS: -1
+  TROPHY_ROWS: 1
+  TROPHY_RANK: -D,-?
+  TROPHY_MARGIN_W: 13
+  TROPHY_MARGIN_H: 0
+  TROPHY_NO_BG: "false"
+  TROPHY_NO_FRAME: "false"
+  TROPHY_THEME: tokyonight
+
+  # -------------------------------------------------------------------------- #
+  # > GitHub pinned repositories                                               #
+  # -------------------------------------------------------------------------- #
+  PIN_SHOW_OWNER: "true"
+  PIN_DESCRIPTION_LINES: 3
+  PIN_1_OWNER: taskbjorn
+  PIN_1_REPO: mpc-playground
+  PIN_2_OWNER: au-agv
+  PIN_2_REPO: dyno
+  PIN_3_OWNER: projectchrono
+  PIN_3_REPO: chrono
+  PIN_4_OWNER: casadi
+  PIN_4_REPO: casadi
+  PIN_5_OWNER: cat-milk
+  PIN_5_REPO: Anime-Girls-Holding-Programming-Books
+  PIN_6_OWNER: auchenberg
+  PIN_6_REPO: volkswagen
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout profile repository
+        uses: actions/checkout@v6
+      - name: Generate GitHub stats
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: stats
+          options: >-
+            username=${{ env.USERNAME }}&theme=${{ env.THEME }}&hide_title=false&card_width=${{ env.STATS_WIDTH }}&hide_rank=${{ env.STATS_HIDE_RANK }}&rank_icon=${{ env.STATS_RANK_ICON }}&show_icons=${{ env.STATS_SHOW_ICONS }}&include_all_commits=${{ env.STATS_INCLUDE_ALL_COMMITS }}&line_height=${{ env.STATS_LINE_HEIGHT }}&custom_title=${{ env.STATS_TITLE }}&text_bold=${{ env.STATS_TEXT_BOLD }}&disable_animations=${{ env.STATS_ANIMATIONS }}&ring_color=${{ env.STATS_RING_COLOR }}&number_format=${{ env.STATS_NUMBER_FORMAT }}
+          path: assets/cards/stats.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+      - name: Generate contribution snake
+        uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: ${{ env.USERNAME }}
+          outputs: |
+            assets/cards/github-snake.svg?color_snake=${{ env.SNAKE_COLOR }}&color_dots=${{ env.SNAKE_DOT_COLORS }}
+            assets/cards/github-snake-dark.svg?palette=github-dark&color_snake=${{ env.SNAKE_COLOR }}&color_dots=${{ env.SNAKE_DOT_COLORS }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate top languages
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: top-langs
+          options: >-
+            username=${{ env.USERNAME }}&theme=${{ env.THEME }}&size_weight=${{ env.LANGS_SIZE_WEIGHT }}&count_weight=${{ env.LANGS_COUNT_WEIGHT }}&hide=${{ env.LANGS_HIDE }}&langs_count=${{ env.LANGS_COUNT }}&layout=${{ env.LANGS_LAYOUT }}&hide_progress=${{ env.LANGS_HIDE_PROGRESS }}
+          path: assets/cards/top-langs.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+      - name: Generate GitHub trophies
+        uses: soulteary/github-profile-trophy-action@v1.0.0
+        with:
+          options: >-
+            username=${{ env.USERNAME }}&rank=${{ env.TROPHY_RANK }}&column=${{ env.TROPHY_COLUMNS }}&row=${{ env.TROPHY_ROWS }}&theme=${{ env.TROPHY_THEME }}&margin-w=${{ env.TROPHY_MARGIN_W }}&margin-h=${{ env.TROPHY_MARGIN_H }}&no-bg=${{ env.TROPHY_NO_BG }}&no-frame=${{ env.TROPHY_NO_FRAME }}
+          path: assets/cards/trophy.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate pin 1
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: pin
+          options: >-
+            username=${{ env.PIN_1_OWNER }}&repo=${{ env.PIN_1_REPO }}&theme=${{ env.THEME }}&show_owner=${{ env.PIN_SHOW_OWNER }}&description_lines_count=${{ env.PIN_DESCRIPTION_LINES }}
+          path: assets/cards/pin-1.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+      - name: Generate pin 2
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: pin
+          options: >-
+            username=${{ env.PIN_2_OWNER }}&repo=${{ env.PIN_2_REPO }}&theme=${{ env.THEME }}&show_owner=${{ env.PIN_SHOW_OWNER }}&description_lines_count=${{ env.PIN_DESCRIPTION_LINES }}
+          path: assets/cards/pin-2.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+      - name: Generate pin 3
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: pin
+          options: >-
+            username=${{ env.PIN_3_OWNER }}&repo=${{ env.PIN_3_REPO }}&theme=${{ env.THEME }}&show_owner=${{ env.PIN_SHOW_OWNER }}&description_lines_count=${{ env.PIN_DESCRIPTION_LINES }}
+          path: assets/cards/pin-3.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+      - name: Generate pin 4
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: pin
+          options: >-
+            username=${{ env.PIN_4_OWNER }}&repo=${{ env.PIN_4_REPO }}&theme=${{ env.THEME }}&show_owner=${{ env.PIN_SHOW_OWNER }}&description_lines_count=${{ env.PIN_DESCRIPTION_LINES }}
+          path: assets/cards/pin-4.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+      - name: Generate pin 5
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: pin
+          options: >-
+            username=${{ env.PIN_5_OWNER }}&repo=${{ env.PIN_5_REPO }}&theme=${{ env.THEME }}&show_owner=${{ env.PIN_SHOW_OWNER }}&description_lines_count=${{ env.PIN_DESCRIPTION_LINES }}
+          path: assets/cards/pin-5.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+      - name: Generate pin 6
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: pin
+          options: >-
+            username=${{ env.PIN_6_OWNER }}&repo=${{ env.PIN_6_REPO }}&theme=${{ env.THEME }}&show_owner=${{ env.PIN_SHOW_OWNER }}&description_lines_count=${{ env.PIN_DESCRIPTION_LINES }}
+          path: assets/cards/pin-6.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+      - name: Commit updated profile assets
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+          git add assets/cards/*.svg
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit --amend --no-edit
+          git push --force-with-lease
